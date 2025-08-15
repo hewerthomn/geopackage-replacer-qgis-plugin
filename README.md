@@ -2,8 +2,8 @@
 
 **Replace any GeoPackage (.gpkg) referenced by your current QGIS project with a new file** (either a `.gpkg` or a `.zip` containing one). The plugin shows a side-by-side preview of layers with feature counts and SRIDs, logs everything, creates a backup, and can reload the project automatically.
 
-> **Repository:** <https://github.com/hewerthomn/geopackage-replacer-plugin-qgis>  
-> **Issues / Tracker:** <https://github.com/hewerthomn/geopackage-replacer-plugin-qgis/issues>
+> **Repository:** <https://github.com/hewerthomn/geopackage-replacer-qgis-plugin>  
+> **Issues / Tracker:** <https://github.com/hewerthomn/geopackage-replacer-qgis-plugin/issues>
 
 ---
 
