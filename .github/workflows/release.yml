@@ -1,0 +1,159 @@
+name: Package & Release QGIS Plugin
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install qgis-plugin-ci
+
+      - name: Locate plugin folder
+        id: loc
+        shell: bash
+        run: |
+          set -e
+          for d in "geopackage_replacer" "." ; do
+            if [[ -f "$d/metadata.txt" ]] && grep -q "^\[general\]" "$d/metadata.txt"; then
+              echo "plugin_dir=$d" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          found="$(git ls-files | grep -E '(^|/)metadata\.txt$' | head -n1 || true)"
+          if [[ -n "$found" ]]; then
+            d="$(dirname "$found")"
+            echo "plugin_dir=$d" >> "$GITHUB_OUTPUT"
+          else
+            echo "No metadata.txt found" >&2
+            exit 1
+          fi
+      - name: Show detected plugin folder
+        run: |
+          echo "Using plugin_dir=${{ steps.loc.outputs.plugin_dir }}"
+          ls -la "${{ steps.loc.outputs.plugin_dir }}"
+          test -f "${{ steps.loc.outputs.plugin_dir }}/metadata.txt" && echo "metadata.txt found"
+
+      - name: Compute version
+        id: ver
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          else
+            ver=$(grep -E '^version=' "${{ steps.loc.outputs.plugin_dir }}/metadata.txt" | head -n1 | cut -d= -f2)
+            echo "version=${ver}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Package plugin
+        run: |
+          cd "${{ steps.loc.outputs.plugin_dir }}"
+          mkdir -p dist
+          qgis-plugin-ci package "${{ steps.ver.outputs.version }}" -a dist
+          # Fallback: some qgis-plugin-ci versions ignore -a and write in parent dir
+          shopt -s nullglob || true
+          for z in ../*.zip *.zip; do
+            echo "Moving $z -> dist/";
+            mv -f "$z" dist/ || true;
+          done
+          ls -la dist/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: geopackage_replacer
+          path: "${{ steps.loc.outputs.plugin_dir }}/dist/*.zip"
+
+  release:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install qgis-plugin-ci
+        run: |
+          python -m pip install --upgrade pip
+          pip install qgis-plugin-ci
+
+      - name: Locate plugin folder
+        id: loc
+        shell: bash
+        run: |
+          set -e
+          for d in "geopackage_replacer" "." ; do
+            if [[ -f "$d/metadata.txt" ]] && grep -q "^\[general\]" "$d/metadata.txt"; then
+              echo "plugin_dir=$d" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          found="$(git ls-files | grep -E '(^|/)metadata\.txt$' | head -n1 || true)"
+          if [[ -n "$found" ]]; then
+            d="$(dirname "$found")"
+            echo "plugin_dir=$d" >> "$GITHUB_OUTPUT"
+          else
+            echo "No metadata.txt found" >&2
+            exit 1
+          fi
+      - name: Show detected plugin folder
+        run: |
+          echo "Using plugin_dir=${{ steps.loc.outputs.plugin_dir }}"
+          ls -la "${{ steps.loc.outputs.plugin_dir }}"
+          test -f "${{ steps.loc.outputs.plugin_dir }}/metadata.txt" && echo "metadata.txt found"
+
+      - name: Compute version (from tag)
+        id: ver
+        shell: bash
+        run: |
+          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Package plugin (again for release)
+        run: |
+          cd "${{ steps.loc.outputs.plugin_dir }}"
+          mkdir -p dist
+          qgis-plugin-ci package "${{ steps.ver.outputs.version }}" -a dist
+          shopt -s nullglob || true
+          for z in ../*.zip *.zip; do
+            echo "Moving $z -> dist/";
+            mv -f "$z" dist/ || true;
+          done
+          ls -la dist/
+
+      - name: Release (GitHub + optional QGIS plugin repo)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OSGEO_USER: ${{ secrets.OSGEO_USER }}
+          OSGEO_PASSWORD: ${{ secrets.OSGEO_PASSWORD }}
+        run: |
+          cd "${{ steps.loc.outputs.plugin_dir }}"
+          if [[ -n "${OSGEO_USER}" && -n "${OSGEO_PASSWORD}" ]]; then
+            qgis-plugin-ci release "${{ steps.ver.outputs.version }}" \
+              --release-tag "${GITHUB_REF_NAME}" \
+              --github-token "${GITHUB_TOKEN}" \
+              --osgeo-username "${OSGEO_USER}" \
+              --osgeo-password "${OSGEO_PASSWORD}"
+          else
+            qgis-plugin-ci release "${{ steps.ver.outputs.version }}" \
+              --release-tag "${GITHUB_REF_NAME}" \
+              --github-token "${GITHUB_TOKEN}"
+          fi

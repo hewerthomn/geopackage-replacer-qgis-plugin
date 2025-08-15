@@ -1,0 +1,26 @@
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "N", "UP", "B", "Q", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["geopackage_replacer"]
+combine-as-imports = true
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["N802", "N999"]
+"geopackage_replacer.py" = ["N802"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.qgis-plugin-ci]
+# Important: path to the plugin folder containing metadata.txt
+plugin_path = "."

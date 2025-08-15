@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Box -->
+  <rect x="24" y="56" width="208" height="144" rx="16" ry="16" fill="#e0e6ef" stroke="#6b7a90" stroke-width="6"/>
+  <path d="M40 72h176v32H40z" fill="#c8d2e1"/>
+  <path d="M40 168h176v16H40z" fill="#c8d2e1"/>
+  <!-- Globe -->
+  <circle cx="128" cy="128" r="46" fill="#2d9cdb" stroke="#0f5b86" stroke-width="6"/>
+  <path d="M128 82a46 46 0 0 0 0 92" fill="none" stroke="#89d2ff" stroke-width="3"/>
+  <path d="M88 128h80M128 88v80" stroke="#89d2ff" stroke-width="3"/>
+  <path d="M98 110c12 6 20-2 26 6s-2 20 10 24 22-6 22-6" fill="none" stroke="#e6f7ff" stroke-width="3"/>
+  <!-- Sync symbol -->
+  <g transform="translate(152,56)">
+    <path d="M28 8a20 20 0 1 1-8 38" fill="none" stroke="#34495e" stroke-width="6" stroke-linecap="round"/>
+    <path d="M20 14l12-6-6 12" fill="#34495e"/>
+    <path d="M12 44a20 20 0 1 1 8-38" fill="none" stroke="#34495e" stroke-width="6" stroke-linecap="round"/>
+    <path d="M20 50l-12 6 6-12" fill="#34495e"/>
+  </g>
+</svg>

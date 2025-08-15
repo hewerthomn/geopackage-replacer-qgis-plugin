@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+*.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs/Editors
+.vscode/
+.idea/
+*.code-workspace
+
+# QGIS plugin build artifacts
+*.zip
+/resources_rc.py
+/geopackage_replacer.zip
+.geopackage_replacer_backups/
+dist/
+
+# Test/coverage caches
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Others
+*.bak
+*.tmp
+~$*
