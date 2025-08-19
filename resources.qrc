@@ -1,5 +1,5 @@
 <RCC>
   <qresource prefix="/geopackage_replacer">
-    <file>resources/icon.svg</file>
+    <file>resources/icon.png</file>
   </qresource>
 </RCC>

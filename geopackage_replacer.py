@@ -34,7 +34,7 @@ from qgis.PyQt.QtWidgets import (
 from . import resources_rc  # noqa: F401
 
 PLUGIN_MENU = "&Geopackage Replacer"
-RESOURCE_ICON = ":/geopackage_replacer/icon.svg"
+RESOURCE_ICON = ":/geopackage_replacer/icon.png"
 SETTINGS_KEY_REOPEN = "geopackage_replacer/reopen_auto"
 
 

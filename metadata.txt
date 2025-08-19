@@ -2,7 +2,7 @@
 name=Geopackage Replacer
 qgisMinimumVersion=3.22
 qgisMaximumVersion=3.99
-version=1.0.0
+version=1.0.1
 author=hewerthomn
 email=hewerthomn@gmail.com
 description=Replace any GeoPackage used in the current project with a new .gpkg or .zip, with layer preview, validation, backup, and optional project auto-reload.
@@ -10,12 +10,12 @@ license=MIT
 repository=https://github.com/hewerthomn/geopackage-replacer-qgis-plugin
 homepage=https://github.com/hewerthomn/geopackage-replacer-qgis-plugin#readme
 tracker=https://github.com/hewerthomn/geopackage-replacer-qgis-plugin/issues
-icon=resources/icon.svg
+icon=resources/icon.png
 category=Database
 experimental=False
 deprecated=False
 tags=geopackage,gpkg,replace,database,qgis,zip,validation,backup
-changelog=1.0.0: Initial release
+changelog=1.0.1: Added new icon ;1.0.0: Initial release
 
 [about]
 Geopackage Replacer updates any .gpkg used in the current project. Pick the new .gpkg (or .zip) and the origin from the project. The plugin validates and previews layers, feature counts and SRIDs before replacing, creates a timestamped backup and (optionally) reloads the project.
